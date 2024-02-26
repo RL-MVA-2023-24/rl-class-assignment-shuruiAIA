@@ -1,11 +1,7 @@
 from gymnasium.wrappers import TimeLimit
 from env_hiv import HIVPatient
-import random
+
 import torch
-import torch.nn as nn
-import numpy as np
-from copy import deepcopy
-import pickle
 
 env = TimeLimit(
     env=HIVPatient(domain_randomization=False), max_episode_steps=200
@@ -28,7 +24,6 @@ class ProjectAgent:
             return torch.argmax(Q).item()
         
     def save(self, path):
-        
         pass
 
     def load(self):
