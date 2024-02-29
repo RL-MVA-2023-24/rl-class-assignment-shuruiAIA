@@ -36,9 +36,10 @@ class ProjectAgent:
 
     def act(self, observation, use_random=False):
         network = self.model
+        network_sup = self.model_sup
         device = "cuda" if next(network.parameters()).is_cuda else "cpu"
         with torch.no_grad():
-            Q = network(torch.Tensor(observation).unsqueeze(0).to(device))
+            Q = network(torch.Tensor(observation).unsqueeze(0).to(device))*0.2 + network_sup(torch.Tensor(observation).unsqueeze(0).to(device))
             return torch.argmax(Q).item()
         
     def save(self, path):
@@ -48,4 +49,8 @@ class ProjectAgent:
         self.model = QNetwork(6, 4, 256)
         checkpoint = torch.load("src/model.pt", map_location=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
         self.model.load_state_dict(checkpoint) 
+
+        self.model_sup = QNetwork(6, 4, 256)
+        checkpoint_sup = torch.load("src/model_sup.pt", map_location=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+        self.model_sup.load_state_dict(checkpoint_sup) 
         pass
